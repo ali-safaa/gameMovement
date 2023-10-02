@@ -1,19 +1,47 @@
 let canvas = document.querySelector('canvas');
+let img = document.querySelector('img');
 let ctx = canvas.getContext('2d');
 
-let x = 0;
-let y = 0;
+let x = 13;
+let y = 15;
 let speedX = 0;
 let speedY = 0;
 
+let map = [
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 3, 3, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+  [1, 3, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1],
+  [1, 3, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1],
+  [1, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+  [1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1],
+  [1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1],
+  [1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1],
+  [0, 0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0, 0],
+  [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1],
+  [2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
+  [1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1],
+  [0, 0, 0, 0, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 0, 0, 0, 0],
+  [0, 0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0, 0],
+  [1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1],
+  [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+  [1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1],
+  [1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1],
+  [1, 1, 2, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 1, 1],
+  [1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1],
+  [1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+  [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+];
+
 function createCanvas() {
-  canvas.width = 300;
-  canvas.height = 300;
+  canvas.width = 500;
+  canvas.height = 500;
 
   ctx.fillStyle = 'gray';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = 'red';
-  ctx.fillRect(x, y, 30, 30);
+  ctx.drawImage(img, x, y, 30, 30);
+  drawWall();
+  drawFood();
 }
 
 function NewPosition() {
@@ -28,6 +56,28 @@ function updateCanvas() {
 }
 
 setInterval(updateCanvas, 20);
+
+function drawWall() {
+  for (let i = 0; i < map.length; i++) {
+    for (let j = 0; j < map[0].length; j++) {
+      if (map[i][j] == 1) {
+        ctx.fillStyle = 'black';
+        ctx.fillRect(i * 20, j * 20, 15, 15);
+      }
+    }
+  }
+}
+
+function drawFood() {
+  for (let i = 0; i < map.length; i++) {
+    for (let j = 0; j < map[0].length; j++) {
+      if (map[i][j] == 2) {
+        ctx.fillStyle = 'yellow';
+        ctx.fillRect(i * 20, j * 20, 5, 5);
+      }
+    }
+  }
+}
 
 function systemMovement() {
   document.addEventListener('keydown', (e) => {
@@ -57,6 +107,16 @@ function systemMovement() {
     speedX = 0;
     speedY = 0;
   });
+}
+
+function eat() {
+  for (let i = 0; i < map.length; i++) {
+    for (let j = 0; j < map[0].length; j++) {
+      if (map[i][j] == 2) {
+        map[i][j] = 3;
+      }
+    }
+  }
 }
 
 systemMovement();
