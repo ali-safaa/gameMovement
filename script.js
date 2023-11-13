@@ -1,18 +1,22 @@
-let canvas = document.querySelector('canvas');
-let img = document.querySelector('img');
-let ctx = canvas.getContext('2d');
+const canvas = document.querySelector('canvas');
+const img = document.querySelector('img');
+const ctx = canvas.getContext('2d');
+const audio = document.querySelector('.audio')
 
-let x = 13;
-let y = 15;
+
+let x = 20;
+let y = 25;
 let speedX = 0;
 let speedY = 0;
+let score = 0;
+let isCollided = false;
 
 let map = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 3, 3, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-  [1, 3, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1],
-  [1, 3, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1],
-  [1, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+  [1, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+  [1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1],
+  [1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1],
+  [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
   [1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1],
   [1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1],
   [1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1],
@@ -37,12 +41,16 @@ function createCanvas() {
   canvas.width = 500;
   canvas.height = 500;
 
-  ctx.fillStyle = 'gray';
+  ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(img, x, y, 30, 30);
+   ctx.drawImage(img, x, y, 20, 20);
   drawWall();
   drawFood();
+ctx.font = "20px Arial";
+ctx.fillText('score ' + score, 10, 480)
+eat()
 }
+
 
 function NewPosition() {
   x += speedX;
@@ -55,14 +63,22 @@ function updateCanvas() {
   createCanvas();
 }
 
-setInterval(updateCanvas, 20);
+setInterval(updateCanvas, 10);
 
 function drawWall() {
   for (let i = 0; i < map.length; i++) {
     for (let j = 0; j < map[0].length; j++) {
       if (map[i][j] == 1) {
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(i * 20 + 1, j * 20 + 1, 20, 20);
+      }
+      if (map[i][j] == 1) {
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(i * 20 + -1, j * 20 + -1, 20, 20);
+      }
+      if(map[i][j] == 1){
         ctx.fillStyle = 'black';
-        ctx.fillRect(i * 20, j * 20, 15, 15);
+        ctx.fillRect(i * 20, j * 20, 20, 20);
       }
     }
   }
@@ -73,7 +89,7 @@ function drawFood() {
     for (let j = 0; j < map[0].length; j++) {
       if (map[i][j] == 2) {
         ctx.fillStyle = 'yellow';
-        ctx.fillRect(i * 20, j * 20, 5, 5);
+        ctx.fillRect(i * 20 + 7, j * 20 + 5, 5, 5);
       }
     }
   }
@@ -86,19 +102,19 @@ function systemMovement() {
     switch (key) {
       case 39:
         speedX = 1;
-        console.log(speedX);
+        audio.play()
         break;
       case 37:
         speedX = -1;
-        console.log(speedX);
+        audio.play()
         break;
       case 38:
         speedY = -1;
-        console.log(speedY);
+        audio.play()
         break;
       case 40:
         speedY = 1;
-        console.log(speedY);
+        audio.play()
         break;
     }
   });
@@ -106,17 +122,49 @@ function systemMovement() {
   document.addEventListener('keyup', () => {
     speedX = 0;
     speedY = 0;
+    audio.pause()
   });
 }
 
 function eat() {
   for (let i = 0; i < map.length; i++) {
     for (let j = 0; j < map[0].length; j++) {
-      if (map[i][j] == 2) {
+      if (map[i][j] == 2 && getMapX() == i && getMapY() == j) {
         map[i][j] = 3;
+        score++
       }
     }
   }
 }
 
+function getMapX(){
+  let mapX = parseInt(x / 20)
+  return mapX
+}
+
+function getMapY(){
+  let mapY = parseInt(y / 20)
+  return mapY
+}
+
 systemMovement();
+
+// function checkCollisions() {
+//   if (
+//       map[parseInt(y / 20)][
+//           parseInt(x / 20)
+//       ] == 1 ||
+//       map[parseInt(y / 20 + 0.9999)][
+//           parseInt(x / 20)
+//       ] == 1 ||
+//       map[parseInt(y / 20)][
+//           parseInt(x / 20 + 0.9999)
+//       ] == 1 ||
+//       map[parseInt(y / 20 + 0.9999)][
+//           parseInt(x / 20 + 0.9999)
+//       ] == 1
+//   ) {
+//       isCollided = true;
+//   }
+//   return isCollided;
+// }
